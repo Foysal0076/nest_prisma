@@ -74,6 +74,8 @@ Nest is [MIT licensed](LICENSE).
 
 ## Common commands
 
+### Run docker-compose.yml
+      docker-compose up -d
 ### Generate new module, controller, and service
     nest generate module user
     nest generate controller user
