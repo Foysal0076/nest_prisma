@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { SignupDto } from 'src/auth/dto'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
@@ -7,12 +8,12 @@ export class AuthService {
   constructor(prismaService: PrismaService) {
     this.prismaService = prismaService
   }
-  
+
   login() {
     return { message: 'Sign In' }
   }
 
-  signUp() {
-    return { message: 'sign up' }
+  signUp({ email, password }: SignupDto) {
+    return { message: email }
   }
 }
