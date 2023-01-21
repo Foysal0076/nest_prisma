@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common'
 import { User } from '@prisma/client'
 import { Request } from 'express'
-import { GetUser } from 'src/auth/decorator/get-user.decorator'
-import { JwtAuthGuard } from 'src/auth/guard'
-import { UserService } from 'src/user/user.service'
+import { GetUser } from '../auth/decorator/get-user.decorator'
+import { JwtAuthGuard } from '../auth/guard'
+import { UserService } from '../user/user.service'
 
 @Controller('user')
 export class UserController {

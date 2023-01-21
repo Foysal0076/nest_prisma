@@ -7,8 +7,8 @@ import {
   Req,
 } from '@nestjs/common'
 import { Request } from 'express'
-import { AuthService } from 'src/auth/auth.service'
-import { SignupDto } from 'src/auth/dto'
+import { AuthService } from '../auth/auth.service'
+import { SignupDto } from '../auth/dto'
 
 @Controller('auth')
 export class AuthController {
