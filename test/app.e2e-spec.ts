@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common'
+import { HttpStatus, INestApplication } from '@nestjs/common'
 import { ValidationPipe } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AppModule } from '../src/app.module'
@@ -6,6 +6,7 @@ import { PrismaService } from '../src/prisma/prisma.service'
 import * as pactum from 'pactum'
 import { SignupDto } from '../src/auth/dto'
 import { EditUserDto } from '../src/user/dto'
+import { CreateBookmarkDto, UpdateBookmarkDto } from '../src/bookmark/dto'
 
 describe('App e2e', () => {
   let app: INestApplication
@@ -119,10 +120,93 @@ describe('App e2e', () => {
   })
 
   describe('Bookmark', () => {
-    describe('Create bookmark', () => {})
-    describe('Get bookmarks', () => {})
-    describe('Get bookmark by id', () => {})
-    describe('Update bookmark by id', () => {})
-    describe('Delete bookmark by id', () => {})
+    describe('Get empty bookmarks', () => {
+      it('should fetch an empty array', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({ Authorization: 'Bearer $S{accessToken}' }) //This way access token will be applied here
+          .expectStatus(200)
+          .expectBody([])
+      })
+    })
+    describe('Create bookmark', () => {
+      it('should create bookmark', () => {
+        const dto: CreateBookmarkDto = {
+          title: 'First bookmark',
+          description: 'This is the first bookmark that I am creating',
+          link: 'http://docs.nestjs.com',
+        }
+        return pactum
+          .spec()
+          .post('/bookmarks')
+          .withHeaders({ Authorization: 'Bearer $S{accessToken}' })
+          .withBody(dto)
+          .expectStatus(201)
+          .expectBodyContains(dto.title)
+          .expectBodyContains(dto.link)
+          .stores('bookmarkId', 'id')
+      })
+    })
+
+    describe('Get all user bookmarks', () => {
+      it('should fetch bookmarks', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({ Authorization: 'Bearer $S{accessToken}' }) //This way access token will be applied here
+          .expectStatus(200)
+          .expectJsonLength(1)
+      })
+    })
+
+    describe('Get bookmark by id', () => {
+      it('should fetch bookmark by id', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({ Authorization: 'Bearer $S{accessToken}' }) //This way access token will be applied here
+          .expectStatus(200)
+          .expectBodyContains('$S{bookmarkId}')
+      })
+    })
+    describe('Update bookmark by id', () => {
+      it('should edit a bookmark by its id', () => {
+        const dto: UpdateBookmarkDto = {
+          title: 'Updated Title',
+          link: 'ddd',
+        }
+        return pactum
+          .spec()
+          .patch('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({ Authorization: 'Bearer $S{accessToken}' }) //This way access token will be applied here
+          .withBody(dto)
+          .expectStatus(200)
+      })
+    })
+    describe('Delete bookmark by id', () => {
+      it('should delete a bookmark by its id', () => {
+        return pactum
+          .spec()
+          .delete('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({ Authorization: 'Bearer $S{accessToken}' }) //This way access token will be applied here
+          .expectStatus(204)
+        // .expectBodyContains('$S{bookmarkId}')
+      })
+    })
+
+    describe('Get empty bookmarks', () => {
+      it('should fetch an empty array', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({ Authorization: 'Bearer $S{accessToken}' }) //This way access token will be applied here
+          .expectStatus(200)
+          .expectBody([])
+      })
+    })
   })
 })
