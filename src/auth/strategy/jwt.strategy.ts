@@ -10,7 +10,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     // If used in super should not use private. super else called before everything else
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: true,
+      ignoreExpiration: true, //For testing purpose true otherwise must be false
       secretOrKey: config.get('JWT_SECRET'),
     })
   }

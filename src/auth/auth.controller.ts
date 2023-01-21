@@ -20,10 +20,10 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   //This will automatically send a 201 response
+  @HttpCode(HttpStatus.CREATED)
   @Post('signup')
   signUp(@Body() signUpDto: SignupDto) {
     //req is the Request object of express
-    console.log('Request body', signUpDto)
     return this.authService.signUp(signUpDto)
   }
 
