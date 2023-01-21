@@ -75,11 +75,25 @@ Nest is [MIT licensed](LICENSE).
 ## Common commands
 
 ### Run docker-compose.yml
+
       docker-compose up -d
+
 ### Generate new module, controller, and service
+
     nest generate module user
     nest generate controller user
     nest generate service user
+
 ## Automatically generate resource for a entity
+
     nest generate resource Post
-  This can generate module, controller, service, and CRUD boilerplate
+
+This can generate module, controller, service, and CRUD boilerplate
+
+## Prisma migration script
+
+      npx prisma migrate dev --name migration_name
+
+## Generate prisma client
+
+      npx prisma generate
