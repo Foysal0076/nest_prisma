@@ -57,7 +57,6 @@ export class BookmarkController {
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) bookmarkId: number
   ) {
-    console.log(bookmarkId)
     return this.bookmarkService.deleteBookmark(userId, bookmarkId)
   }
 }
