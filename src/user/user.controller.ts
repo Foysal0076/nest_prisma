@@ -15,6 +15,7 @@ import { GetUser } from '../auth/decorator/get-user.decorator'
 import { JwtAuthGuard } from '../auth/guard'
 import { UserService } from '../user/user.service'
 import { EditUserDto } from './dto'
+import { ApiBearerAuth } from '@nestjs/swagger'
 
 @Controller('user')
 export class UserController {
@@ -23,6 +24,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard) //This must be used for @GetUser() decorator to be working
   @Get('details')
+  @ApiBearerAuth()
   // getUserDetails(@Req() req: Request) {
   //   return this.userService.getUserDetails(req.user)
   // }
