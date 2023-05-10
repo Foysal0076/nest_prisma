@@ -16,19 +16,18 @@ import { JwtAuthGuard } from '../auth/guard'
 import { BookmarkService } from './bookmark.service'
 import { CreateBookmarkDto } from './dto'
 import {
-  ApiBasicAuth,
   ApiBearerAuth,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
-  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger'
 import { Bookmark } from './entities/bookmark.entity'
 
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 @Controller('bookmarks')
-@ApiTags('bookmarks')
+@ApiTags('Bookmarks')
 export class BookmarkController {
   constructor(private bookmarkService: BookmarkService) {}
 
@@ -44,11 +43,13 @@ export class BookmarkController {
   }
 
   @Get()
+  @ApiBearerAuth()
   getBookmarks(@GetUser('id') userId: number) {
     return this.bookmarkService.getBookmarks(userId)
   }
 
   @Post()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create bookmark' })
   @ApiResponse({
     status: 200,
@@ -63,6 +64,12 @@ export class BookmarkController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'The updated record',
+    type: Bookmark,
+  })
   updateBookmark(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) bookmarkId: number,
@@ -73,6 +80,8 @@ export class BookmarkController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
+  @ApiBearerAuth()
+  @ApiNoContentResponse({ description: 'No content' })
   deleteBookmark(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) bookmarkId: number

@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { CreateTodoDto } from './dto/create-todo.dto'
 import { UpdateTodoDto } from './dto/update-todo.dto'
 import { PrismaService } from '../prisma/prisma.service'
@@ -26,12 +30,32 @@ export class TodoService {
       })
   }
 
-  findAll() {
-    return `This action returns all todo`
+  async getAllTodo(userId: number) {
+    try {
+      const allTodo = await this.prisma.todo.findMany({
+        where: {
+          userId: userId,
+        },
+      })
+      return allTodo
+    } catch (error) {
+      throw error
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} todo`
+  async getTodoById(todoId: number, userId: number) {
+    try {
+      const foundTodo = await this.prisma.todo.findFirst({
+        where: {
+          id: todoId,
+          userId,
+        },
+      })
+      if (!foundTodo) throw new NotFoundException('Not found')
+      return foundTodo
+    } catch (error) {
+      throw error
+    }
   }
 
   async update(userId: number, todoId: number, updateTodoDto: UpdateTodoDto) {

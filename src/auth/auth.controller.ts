@@ -9,8 +9,11 @@ import {
 import { Request } from 'express'
 import { AuthService } from '../auth/auth.service'
 import { SignupDto } from '../auth/dto'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { SigninEntity, SignupEntity } from './entities'
 
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   // authService: AuthService
   // constructor(authService: AuthService) {
@@ -22,6 +25,10 @@ export class AuthController {
   //This will automatically send a 201 response
   @HttpCode(HttpStatus.CREATED)
   @Post('signup')
+  @ApiCreatedResponse({
+    description: 'Access token is sent',
+    type: SignupEntity,
+  })
   signUp(@Body() signUpDto: SignupDto) {
     //req is the Request object of express
     return this.authService.signUp(signUpDto)
@@ -29,6 +36,10 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('signin')
+  @ApiOkResponse({
+    description: 'Access token is sent',
+    type: SigninEntity,
+  })
   signin(@Body() loginDto: SignupDto) {
     return this.authService.login(loginDto)
   }
