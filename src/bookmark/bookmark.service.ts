@@ -5,19 +5,40 @@ import {
 } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateBookmarkDto, UpdateBookmarkDto } from './dto'
+import {
+  PaginatedDto,
+  PaginationMetaDto,
+  PaginationOptionsDto,
+} from '../shared/dto/pagination'
+import { Bookmark } from './entities/bookmark.entity'
 
 @Injectable()
 export class BookmarkService {
   constructor(private prisma: PrismaService) {}
 
-  async getBookmarks(userId: number) {
+  async getBookmarks(
+    userId: number,
+    paginationOptions: PaginationOptionsDto
+  ): Promise<PaginatedDto<Bookmark>> {
     try {
       const bookmarks = await this.prisma.bookmark.findMany({
+        take: paginationOptions.take,
+        skip: paginationOptions.skip,
         where: {
           userId: userId,
         },
+        orderBy: {
+          createdAt: paginationOptions.order,
+        },
       })
-      return bookmarks
+
+      const itemCount = await this.prisma.bookmark.count()
+      const paginationMeta = new PaginationMetaDto({
+        itemCount,
+        paginationOptionsDto: paginationOptions,
+      })
+      const paginationResults = new PaginatedDto(bookmarks, paginationMeta)
+      return paginationResults
     } catch (error) {
       throw error
     }

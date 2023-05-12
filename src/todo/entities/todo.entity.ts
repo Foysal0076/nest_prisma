@@ -1,7 +1,7 @@
 export class TodoEntity {
   id: number
   title: string
-  description: string
+  description?: string | null
   status: string
   userId: number
   createdAt: Date

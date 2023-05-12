@@ -8,6 +8,12 @@ import { UpdateTodoDto } from './dto/update-todo.dto'
 import { PrismaService } from '../prisma/prisma.service'
 import { Todo } from '@prisma/client'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
+import {
+  PaginatedDto,
+  PaginationMetaDto,
+  PaginationOptionsDto,
+} from '../shared/dto/pagination'
+import { TodoEntity } from './entities/todo.entity'
 
 @Injectable()
 export class TodoService {
@@ -30,14 +36,28 @@ export class TodoService {
       })
   }
 
-  async getAllTodo(userId: number) {
+  async getAllTodo(
+    userId: number,
+    paginationOptions: PaginationOptionsDto
+  ): Promise<PaginatedDto<TodoEntity>> {
     try {
       const allTodo = await this.prisma.todo.findMany({
+        take: paginationOptions.take,
+        skip: paginationOptions.skip,
         where: {
           userId: userId,
         },
+        orderBy: {
+          [paginationOptions.orderBy]: paginationOptions.order,
+        },
       })
-      return allTodo
+      const itemCount = await this.prisma.todo.count()
+      const paginationMeta = new PaginationMetaDto({
+        itemCount,
+        paginationOptionsDto: paginationOptions,
+      })
+      const paginatedResults = new PaginatedDto(allTodo, paginationMeta)
+      return paginatedResults
     } catch (error) {
       throw error
     }

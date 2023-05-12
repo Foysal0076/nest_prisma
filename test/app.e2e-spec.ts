@@ -127,7 +127,9 @@ describe('App e2e', () => {
           .get('/bookmarks')
           .withHeaders({ Authorization: 'Bearer $S{accessToken}' }) //This way access token will be applied here
           .expectStatus(200)
-          .expectBody([])
+          .expectJsonLike({
+            results: [],
+          })
       })
     })
     describe('Create bookmark', () => {
@@ -151,12 +153,20 @@ describe('App e2e', () => {
 
     describe('Get all user bookmarks', () => {
       it('should fetch bookmarks', () => {
-        return pactum
-          .spec()
-          .get('/bookmarks')
-          .withHeaders({ Authorization: 'Bearer $S{accessToken}' }) //This way access token will be applied here
-          .expectStatus(200)
-          .expectJsonLength(1)
+        return (
+          pactum
+            .spec()
+            .get('/bookmarks')
+            .withHeaders({ Authorization: 'Bearer $S{accessToken}' }) //This way access token will be applied here
+            .expectStatus(200)
+            // .expectJsonLength(1)
+            .expectJsonLike({
+              meta: {
+                page: 1,
+                itemCount: 1,
+              },
+            })
+        )
       })
     })
 
@@ -205,7 +215,9 @@ describe('App e2e', () => {
           .get('/bookmarks')
           .withHeaders({ Authorization: 'Bearer $S{accessToken}' }) //This way access token will be applied here
           .expectStatus(200)
-          .expectBody([])
+          .expectJsonLike({
+            results: [],
+          })
       })
     })
   })

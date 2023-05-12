@@ -10,6 +10,9 @@ import {
   ParseIntPipe,
   HttpCode,
   HttpStatus,
+  ClassSerializerInterceptor,
+  UseInterceptors,
+  Query,
 } from '@nestjs/common'
 import { TodoService } from './todo.service'
 import { CreateTodoDto } from './dto/create-todo.dto'
@@ -20,15 +23,21 @@ import {
   ApiBearerAuth,
   ApiNoContentResponse,
   ApiOkResponse,
-  ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
 import { TodoEntity } from './entities/todo.entity'
+import { ApiPaginatedResponse } from '../shared/decorator/api-paginated-response.decorator'
+import {
+  PaginatedDto,
+  PaginationOptionsDto,
+  PaginationParametersDto,
+} from '../shared/dto/pagination'
 
 @UseGuards(JwtAuthGuard)
 @Controller('todo')
 @ApiTags('Todo')
+@UseInterceptors(ClassSerializerInterceptor)
 export class TodoController {
   constructor(private todoService: TodoService) {}
 
@@ -45,8 +54,12 @@ export class TodoController {
 
   @Get()
   @ApiBearerAuth()
-  getAllTodo(@GetUser('id') userId: number) {
-    return this.todoService.getAllTodo(userId)
+  @ApiPaginatedResponse(TodoEntity)
+  getAllTodo(
+    @GetUser('id') userId: number,
+    @Query() queryParams: PaginationOptionsDto
+  ): Promise<PaginatedDto<TodoEntity>> {
+    return this.todoService.getAllTodo(userId, queryParams)
   }
 
   @Get(':id')

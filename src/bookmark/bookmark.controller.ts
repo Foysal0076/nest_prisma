@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -9,7 +10,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { GetUser } from '../auth/decorator/get-user.decorator'
 import { JwtAuthGuard } from '../auth/guard'
@@ -18,16 +21,18 @@ import { CreateBookmarkDto } from './dto'
 import {
   ApiBearerAuth,
   ApiNoContentResponse,
-  ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
 import { Bookmark } from './entities/bookmark.entity'
+import { PaginatedDto, PaginationOptionsDto } from '../shared/dto/pagination'
+import { ApiPaginatedResponse } from '../shared/decorator/api-paginated-response.decorator'
 
 @UseGuards(JwtAuthGuard)
 @Controller('bookmarks')
 @ApiTags('Bookmarks')
+@UseInterceptors(ClassSerializerInterceptor)
 export class BookmarkController {
   constructor(private bookmarkService: BookmarkService) {}
 
@@ -44,8 +49,12 @@ export class BookmarkController {
 
   @Get()
   @ApiBearerAuth()
-  getBookmarks(@GetUser('id') userId: number) {
-    return this.bookmarkService.getBookmarks(userId)
+  @ApiPaginatedResponse(Bookmark)
+  getBookmarks(
+    @GetUser('id') userId: number,
+    @Query() params: PaginationOptionsDto
+  ): Promise<PaginatedDto<Bookmark>> {
+    return this.bookmarkService.getBookmarks(userId, params)
   }
 
   @Post()
