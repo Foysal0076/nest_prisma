@@ -12,11 +12,13 @@ async function bootstrap() {
     .setTitle('Nest.js prisma')
     .setDescription('Nest.js prisma project apis')
     .setVersion('1.0')
-    .addTag('NestJs')
     .addBearerAuth()
     .build()
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig)
+  const document = SwaggerModule.createDocument(app, swaggerConfig, {
+    ignoreGlobalPrefix: true,
+  })
+
   SwaggerModule.setup('api', app, document)
 
   await app.listen(5001)

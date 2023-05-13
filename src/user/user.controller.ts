@@ -15,7 +15,12 @@ import { GetUser } from '../auth/decorator/get-user.decorator'
 import { JwtAuthGuard } from '../auth/guard'
 import { UserService } from '../user/user.service'
 import { EditUserDto } from './dto'
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger'
 import { UserEntity } from './entities'
 
 @Controller('user')
@@ -27,21 +32,24 @@ export class UserController {
   @UseGuards(JwtAuthGuard) //This must be used for @GetUser() decorator to be working
   @Get('details')
   @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get user details',
+  })
   @ApiOkResponse({ description: 'User details', type: UserEntity })
   // getUserDetails(@Req() req: Request) {
   //   return this.userService.getUserDetails(req.user)
   // }
-  getUserDetails(@GetUser() user: User, @GetUser('email') email: string) {
-    // console.log(email)
+  getUserDetails(@GetUser() user: User) {
     return this.userService.getUserDetails(user)
   }
 
   @Patch('')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Update user details' })
   @ApiOkResponse({
     description: 'User details has been updated',
     type: UserEntity,
   })
-  @UseGuards(JwtAuthGuard)
   editUser(@GetUser('id') id: number, @Body() dto: EditUserDto) {
     return this.userService.updateUser(id, dto)
   }

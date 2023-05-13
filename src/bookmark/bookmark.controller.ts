@@ -50,6 +50,7 @@ export class BookmarkController {
   @Get()
   @ApiBearerAuth()
   @ApiPaginatedResponse(Bookmark)
+  @ApiOperation({ summary: 'Get all bookmarks' })
   getBookmarks(
     @GetUser('id') userId: number,
     @Query() params: PaginationOptionsDto
@@ -74,6 +75,7 @@ export class BookmarkController {
 
   @Patch(':id')
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update bookmark' })
   @ApiResponse({
     status: 200,
     description: 'The updated record',
@@ -90,6 +92,7 @@ export class BookmarkController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a bookmark' })
   @ApiNoContentResponse({ description: 'No content' })
   deleteBookmark(
     @GetUser('id') userId: number,

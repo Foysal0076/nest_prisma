@@ -23,6 +23,7 @@ import {
   ApiBearerAuth,
   ApiNoContentResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
@@ -43,6 +44,7 @@ export class TodoController {
 
   @Post()
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create bookmark' })
   @ApiResponse({
     status: 201,
     description: 'The created record',
@@ -55,6 +57,7 @@ export class TodoController {
   @Get()
   @ApiBearerAuth()
   @ApiPaginatedResponse(TodoEntity)
+  @ApiOperation({ summary: 'Get paginated todo' })
   getAllTodo(
     @GetUser('id') userId: number,
     @Query() queryParams: PaginationOptionsDto
@@ -64,6 +67,7 @@ export class TodoController {
 
   @Get(':id')
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get a todo by id' })
   getTodoById(
     @Param('id', ParseIntPipe) todoId: number,
     @GetUser('id') userId: number
@@ -73,6 +77,7 @@ export class TodoController {
 
   @Patch(':id')
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update a todo' })
   @ApiOkResponse({
     description: 'The updated record',
     type: TodoEntity,
@@ -88,6 +93,7 @@ export class TodoController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a todo' })
   @ApiNoContentResponse({ description: 'No content' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.todoService.remove(id)
